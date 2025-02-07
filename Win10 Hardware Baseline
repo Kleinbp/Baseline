@@ -1,1 +1,83 @@
+#Work in progress
 
+#Example 
+
+#$table = @{}
+
+#$dictionary = @{processor = @{make = "intel"; model = "i7"}}
+
+
+
+
+
+#processor
+$processor = Get-CimInstance Win32_Processor | Select-Object Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed
+$process_data = @{"Processor"= @{Name = $processor.Name; Manufacturer = $processor.Manufacturer; "Core Count" = $processor.NumberOfCores; "Logical Processor Count" = $processor.NumberOfLogicalProcessors; "Clock Speed" = $processor.MaxClockSpeed / 1000}}
+#$table.Add("Processor"= @{Name = $processor.Name; Manufacturer = $processor.Manufacturer; "Core Count" = $processor.NumberOfCores; "Logical Processor Count" = $processor.NumberOfLogicalProcessors; "Clock Speed" = $processor.MaxClockSpeed / 1024}})
+
+
+
+
+
+
+
+
+
+
+#Memory
+Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, PartNumber
+(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+
+
+#Memory
+$memory = Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, PartNumber
+(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+
+$memory_data = @{Manufacturer = $memory.Manufacturer; "Memory Capacity" = $memory.Capacity; "Memory Speed" = $memory.Speed; "Memory Part Number" = $memory.PartNumber}
+
+#number of RAM chips
+
+
+echo $memory_data.'Memory Capacity'
+
+
+
+
+
+
+
+
+
+
+
+#storage
+Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size, SerialNumber
+Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, VolumeName, Size, FreeSpace
+
+#mobo
+Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer, Product, SerialNumber
+
+
+#bios
+Get-CimInstance Win32_BIOS | Select-Object Manufacturer, SMBIOSBIOSVersion, ReleaseDate
+
+#GPU
+Get-CimInstance Win32_VideoController | Select-Object Name, AdapterRAM, DriverVersion
+
+#network adapter 
+Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.NetEnabled -eq $true } | Select-Object Name, MACAddress, Speed
+Get-NetIPAddress | Select-Object InterfaceAlias, IPAddress
+
+#Powersupply
+#Get-CimInstance Win32_Battery 
+
+#monitor
+#Get-CimInstance WmiMonitorID -Namespace root\wmi | Select-Object ManufacturerName, SerialNumberID, UserFriendlyName
+
+#OS
+Get-ComputerInfo | Select-Object CsName, OsName, OsArchitecture, WindowsVersion, WindowsBuildLabEx, CsModel, CsManufacturer
+
+hostname
+
+
+$dictionary = @{processor = }
