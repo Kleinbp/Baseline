@@ -1,58 +1,52 @@
-#Work in progress
-
-#Example 
-
-#$table = @{}
-
-#$dictionary = @{processor = @{make = "intel"; model = "i7"}}
-
-
-
-
-
 #processor
 $processor = Get-CimInstance Win32_Processor | Select-Object Name, Manufacturer, NumberOfCores, NumberOfLogicalProcessors, MaxClockSpeed
-$process_data = @{"Processor"= @{Name = $processor.Name; Manufacturer = $processor.Manufacturer; "Core Count" = $processor.NumberOfCores; "Logical Processor Count" = $processor.NumberOfLogicalProcessors; "Clock Speed" = $processor.MaxClockSpeed / 1000}}
-#$table.Add("Processor"= @{Name = $processor.Name; Manufacturer = $processor.Manufacturer; "Core Count" = $processor.NumberOfCores; "Logical Processor Count" = $processor.NumberOfLogicalProcessors; "Clock Speed" = $processor.MaxClockSpeed / 1024}})
-
-
-
-
-
-
-
-
-
+$processor_table = @{
+"Processor" = @{
+"Name" = $processor.Name
+"Manufacturer" = $processor.Manufacturer 
+"Core Count" = $processor.NumberOfCores 
+"Logical Processor Count" = $processor.NumberOfLogicalProcessors
+"Clock Speed" = ($processor.MaxClockSpeed / 1000)
+}}
 
 #Memory
-Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, PartNumber
-(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+$memory = Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Speed, PartNumber
+$memory_physical = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB)
+$mem_stick_count = $memory.Manufacturer.Count
+$memory_table = @{
+"Memory" = @{
 
-
-#Memory
-$memory = Get-CimInstance Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, PartNumber
-(Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
-
-$memory_data = @{Manufacturer = $memory.Manufacturer; "Memory Capacity" = $memory.Capacity; "Memory Speed" = $memory.Speed; "Memory Part Number" = $memory.PartNumber}
-
-#number of RAM chips
-
-
-echo $memory_data.'Memory Capacity'
-
-
-
-
-
-
-
-
-
-
+"Memory Manufacturer" = $memory.Manufacturer
+"Memory Speed" =  $memory.Speed
+"Memory Capacity" = $memory_physical
+"Part Number" = $memory.Partnumber.trim()
+"Memory Stick Count" = $memory.Manufacturer.Count
+}}
 
 #storage
-Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size, SerialNumber
-Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, VolumeName, Size, FreeSpace
+$physical_drive = Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size, SerialNumber
+$logical_drive = Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, VolumeName, Size, FreeSpace
+
+$drive_storage = @()
+foreach ($item in $physical_drive.Size) {$drive_storage += ($item/1e+12)}
+
+#WIP <----- I stopped here
+$storage_table = @{
+"Physical Drive(s)" = @{
+"Drive Model(s)" = $physical_drive.model
+"Physical Drive Count" = $physical_drive.model.Count
+"Drive Size" = $physical_drive.Size / 1e+12
+"Drive Serial Number" = $physical_drive.serialnumber
+
+
+}
+"Logical Drive" = @{}
+
+
+
+}
+foreach ($item in $storage_table.physicaldrive) {echo $item}
+
 
 #mobo
 Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer, Product, SerialNumber
