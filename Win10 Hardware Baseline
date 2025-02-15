@@ -27,24 +27,30 @@ $memory_table = @{
 $physical_drive = Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size, SerialNumber
 $logical_drive = Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, VolumeName, Size, FreeSpace
 
-$drive_storage = @()
-foreach ($item in $physical_drive.Size) {$drive_storage += ($item/1e+12)}
 
-#WIP <----- I stopped here
+#Individual drive storage size calculation & formatting
+$drive_storage_size = @()
+foreach ($item in $physical_drive.Size) {$number = $item/1e+12; $formatted = "{0:N4}" -f $number; $drive_storage_size += ("$formatted" + " TB")}
+
+$logi_drives = @{}
+foreach ($item in $logical_drive) {
+
+$logi_vol_name = $logical_drive.deviceid
+$logi_vol_size = $logical_drive.volumename
+$logi_vol_freespace = $logical_drive.freespace
+
+$logi_drives[$] = 
+
+}
 $storage_table = @{
 "Physical Drive(s)" = @{
 "Drive Model(s)" = $physical_drive.model
 "Physical Drive Count" = $physical_drive.model.Count
-"Drive Size" = $physical_drive.Size / 1e+12
-"Drive Serial Number" = $physical_drive.serialnumber
-
-
-}
-"Logical Drive" = @{}
-
-
-
-}
+"Drive Size" = $drive_storage_size
+"Drive Serial Number" = $physical_drive.serialnumber}
+"Logical Drive(s)" = @{
+#SECTION WIP
+}}
 foreach ($item in $storage_table.physicaldrive) {echo $item}
 
 
