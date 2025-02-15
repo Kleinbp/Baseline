@@ -27,31 +27,33 @@ $memory_table = @{
 $physical_drive = Get-CimInstance Win32_DiskDrive | Select-Object Model, MediaType, Size, SerialNumber
 $logical_drive = Get-CimInstance Win32_LogicalDisk | Select-Object DeviceID, VolumeName, Size, FreeSpace
 
-
 #Individual drive storage size calculation & formatting
 $drive_storage_size = @()
 foreach ($item in $physical_drive.Size) {$number = $item/1e+12; $formatted = "{0:N4}" -f $number; $drive_storage_size += ("$formatted" + " TB")}
 
+#Logical drive section
 $logi_drives = @{}
-foreach ($item in $logical_drive) {
+foreach ($item in $logical_drive) { 
+if ($item.DeviceID -eq "C:") {$item.VolumeName = "Local Disk"}
+else {}
 
-$logi_vol_name = $logical_drive.deviceid
-$logi_vol_size = $logical_drive.volumename
-$logi_vol_freespace = $logical_drive.freespace
+#Free Space Calc
+$number = ($item.FreeSpace/1e+9); $formatted = "{0:N2}" -f $number; $free_space = ("$formatted" + " GB")
 
-$logi_drives[$] = 
+#Size Calc
+$number = ($item.Size/1e+9); $formatted = "{0:N2}" -f $number; $size = ("$formatted" + " GB")
 
-}
+
+$logi_drives[$item.DeviceID] = $item.VolumeName, ($free_space), ($size)}
+
+#Overall Storage table
 $storage_table = @{
 "Physical Drive(s)" = @{
 "Drive Model(s)" = $physical_drive.model
 "Physical Drive Count" = $physical_drive.model.Count
 "Drive Size" = $drive_storage_size
 "Drive Serial Number" = $physical_drive.serialnumber}
-"Logical Drive(s)" = @{
-#SECTION WIP
-}}
-foreach ($item in $storage_table.physicaldrive) {echo $item}
+"Logical Drive(s)" = $logi_drives}
 
 
 #mobo
