@@ -56,9 +56,13 @@ $storage_table = @{
 "Logical Drive(s)" = $logi_drives}
 
 
-#mobo
-Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer, Product, SerialNumber
-
+#motherboard
+$mobo_info = Get-CimInstance Win32_BaseBoard | Select-Object Manufacturer, Product, SerialNumber
+$mobo_table = @{
+"Manufacturer" = $mobo_info.Manufacturer
+"Model" = $mobo_info.Product
+"Serial Number" = $mobo_info.SerialNumber
+}
 
 #bios
 Get-CimInstance Win32_BIOS | Select-Object Manufacturer, SMBIOSBIOSVersion, ReleaseDate
