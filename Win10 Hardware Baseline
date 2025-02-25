@@ -71,8 +71,13 @@ $bios_table = @{
 "BIOS Version" = $bios_info.SMBIOSBIOSVersion
 "Release Date" = $bios_info.ReleaseDate}
 
-#GPU
-Get-CimInstance Win32_VideoController | Select-Object Name, AdapterRAM, DriverVersion
+#GPU Version-- this might be the incorrect VRAM, this was misreporting on my system
+$GPU_info = Get-CimInstance Win32_VideoController | Select-Object Name, AdapterRAM, DriverVersion
+$GPU_table = @{
+"Name" = $GPU_info.Name
+"VRAM" = ($GPU_info.AdapterRAM/1GB)
+"Driver Version" = $GPU_info.DriverVersion}
+
 
 #network adapter 
 Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.NetEnabled -eq $true } | Select-Object Name, MACAddress, Speed
