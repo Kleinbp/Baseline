@@ -65,7 +65,11 @@ $mobo_table = @{
 }
 
 #bios
-Get-CimInstance Win32_BIOS | Select-Object Manufacturer, SMBIOSBIOSVersion, ReleaseDate
+$bios_info = Get-CimInstance Win32_BIOS | Select-Object Manufacturer, SMBIOSBIOSVersion, ReleaseDate
+$bios_table = @{
+"Manufacturer" = $bios_info.Manufacturer
+"BIOS Version" = $bios_info.SMBIOSBIOSVersion
+"Release Date" = $bios_info.ReleaseDate}
 
 #GPU
 Get-CimInstance Win32_VideoController | Select-Object Name, AdapterRAM, DriverVersion
