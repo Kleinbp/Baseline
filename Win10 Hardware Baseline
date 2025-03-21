@@ -79,9 +79,27 @@ $GPU_table = @{
 "Driver Version" = $GPU_info.DriverVersion}
 
 
+#WIP
+
 #network adapter 
+
 Get-CimInstance Win32_NetworkAdapter | Where-Object { $_.NetEnabled -eq $true } | Select-Object Name, MACAddress, Speed
 Get-NetIPAddress | Select-Object InterfaceAlias, IPAddress
+
+$network_adapter_data_0 = Get-CimInstance  Win32_NetworkAdapter | Where-Object { $_.NetEnabled -eq $true } | Select-Object Name, MACAddress, Speed
+$network_adapter_data_1 = Get-NetIPAddress | Select-Object InterfaceAlias, IPAddress
+
+
+$speed = @{}
+foreach ($item in $network_adapter_data_0.speed) {$speed.append.(([math]::Round($item / 1Mb, 1 )))}
+
+$network_adapter = @{
+"Name" = $network_adapter_data_0.name
+"MAC Address" = $network_adapter_data_0.MacAddress
+"Speed" = [math]::Round($network_adapter_data_0.speed / 1Mb, 1)
+}
+foreach ($item in $network_adapter) {echo $item}
+#WIP
 
 #Powersupply
 #Get-CimInstance Win32_Battery 
